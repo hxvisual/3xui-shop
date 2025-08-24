@@ -165,6 +165,20 @@ cleanup() {
     echo "✅ Cleanup complete."
 }
 
+install_docker() {
+    if ! command -v docker &> /dev/null; then
+        echo "🐳 Docker is not installed. Installing..."
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
+        rm get-docker.sh
+        sudo usermod -aG docker $USER
+        echo "✅ Docker installed successfully."
+        echo "💡 You may need to log out and log back in for the group changes to take effect."
+    else
+        echo "✅ Docker is already installed."
+    fi
+}
+
 QUIET=false
 
 log() {
@@ -187,6 +201,7 @@ main() {
     done
 
     check_dependencies
+    install_docker
 
     local is_update=false
     if [[ -n "$PROJECT_ROOT" ]]; then
